@@ -1,47 +1,61 @@
 import styles from "./Task.module.css"
 import { PlusCircle } from "phosphor-react"
-import { ChangeEvent, FormEvent, useState, useEffect } from "react"
+import { ChangeEvent, FormEvent, useState, useEffect, useContext } from "react"
 import { HeaderTaskList } from "./HeaderTaskList"
 import { TaskListEmpty } from "./TaskListEmpty"
 import { TaskList } from "./TaskList"
+import { addDoc, collection, onSnapshot, doc, deleteDoc } from "@firebase/firestore"
+import { firestore } from "../firebase/firebase"
+import { TasksContext } from "../context"
 
 interface Tasks {
-    id: number,
-    content: string
+    id: string,
+    content: string,
+    complete: boolean
 }
 
 export function Task () {
     const [tasks, setTasks] = useState<Tasks[]>([])
-
     const [newTask, setNewTask] = useState("")
+    const { alteredCheckbox } = useContext(TasksContext)
 
     const [stateDeleteTask, setNewStateDeleteTask] = useState(Boolean)
 
     const isNewTaskEmpty = newTask.length === 0;
     const numberOfTasks = tasks.length;
-    
-    let numberOfCompleteTasks = 0;
+
+    const allTasks = collection(firestore, "todos")
 
     async function loadTasks() {
-        const response = await fetch('http://localhost:3000/task');
-        const data = await response.json();
-
-        setTasks(data);
-        setNewStateDeleteTask(false);
+        let loadedTasksFromDB: Tasks[] = []
+        onSnapshot(allTasks, (querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                loadedTasksFromDB.push(
+                    {
+                        id: doc.id, 
+                        content: doc.data().task, 
+                        complete: doc.data().complete
+                    }
+                ) 
+            })
+            setTasks(loadedTasksFromDB)
+        })
     }
 
     useEffect (() => {
         loadTasks();
-    }, [newTask, stateDeleteTask])
+    }, [newTask, stateDeleteTask, alteredCheckbox])
 
     async function postTask(content: string){
-        fetch('http://localhost:3000/task', {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ content })
-        }).then(data => data.json())
+        let data = {
+            task: content,
+            complete: false
+        }
+        try {
+            addDoc(allTasks, data)
+        } catch (e){
+            console.log(e)
+        }
     }
 
     function handleCreateNewTask(event: FormEvent){
@@ -56,20 +70,16 @@ export function Task () {
         setNewTask(event.target.value)
     }
 
-    async function onDeleteTask(id: number) {
-        let url = `http://localhost:3000/task/${id}`;
-        fetch(url, {
-            method: 'DELETE',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            }
-        }).then(data => data.json())
-        
-        setTasks(tasks);
-        setNewStateDeleteTask(true);
-    }
+    async function onDeleteTask(task: string) {
+        onSnapshot(allTasks, (querySnapshot) => {
+            querySnapshot.forEach((document) => {
+                if(document.id === task) {
+                    deleteDoc(doc(firestore, "todos", task))
+                    setNewStateDeleteTask(!stateDeleteTask)
+                }
+            })
+        })
+    }  
 
     return (
         <main>
@@ -93,7 +103,6 @@ export function Task () {
 
             <HeaderTaskList 
                 quantTasks={numberOfTasks}
-                quantCompleteTasks={numberOfCompleteTasks}
             />
 
             {
@@ -102,8 +111,8 @@ export function Task () {
                         <TaskList key={task.id}
                             idTasks={task.id}
                             contentTasks={task.content}
+                            completeTasks={task.complete}
                             onDeleteTask={onDeleteTask}
-                            numberOfCompleteTasks={numberOfCompleteTasks}
                         />
                     ))
             }

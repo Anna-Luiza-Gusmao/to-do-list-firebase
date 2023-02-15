@@ -1,46 +1,71 @@
 import "./TaskList.css"
 import { Trash } from "phosphor-react"
-import { useState } from "react"
+import { useContext, useEffect, useState } from "react"
+import { TasksContext } from "../context"
+import { doc, updateDoc } from "@firebase/firestore"
+import { firestore } from "../firebase/firebase"
 
 interface TasksProps {
-    idTasks: number,
+    idTasks: string,
     contentTasks: string,
-    onDeleteTask: (id: number) => void,
-    numberOfCompleteTasks: number
+    completeTasks: boolean,
+    onDeleteTask: (task: string) => void
 }
 
-export function TaskList ({idTasks, contentTasks, onDeleteTask, numberOfCompleteTasks}:TasksProps) {
-
+export function TaskList ({ idTasks, contentTasks, onDeleteTask, completeTasks}:TasksProps) {
+    const { 
+        setNumberOfCompleteTasks, 
+        numberOfCompleteTasks, 
+        setAlteredCheckbox, 
+        alteredCheckbox 
+    } = useContext(TasksContext)
     const [stateOfCheckbox, setStateOfCheckbox] = useState(Boolean)
     const [stateDecorationOfCheckbox, setStateDecorationOfCheckbox] = useState('noLine')
 
-    if(stateOfCheckbox == true) numberOfCompleteTasks++;
+    function handleCheckbox (id: string) {
+        if(stateOfCheckbox == false) {
+            const changedData = {
+                complete: true
+            }
+            const docRef = doc(firestore, "todos", id)
+            updateDoc(docRef, changedData)
 
-    console.log(numberOfCompleteTasks)
-
-    function handleCheckbox () {
-        setStateOfCheckbox(!stateOfCheckbox);
-
-        stateOfCheckbox === false ?
             setStateDecorationOfCheckbox('line')
-        : setStateDecorationOfCheckbox('noLine')
+            setNumberOfCompleteTasks(numberOfCompleteTasks + 1)
+        }else {
+            const changedData = {
+                complete: false
+            }
+            const docRef = doc(firestore, "todos", id)
+            updateDoc(docRef, changedData)
+
+            setStateDecorationOfCheckbox('noLine')
+            setNumberOfCompleteTasks(numberOfCompleteTasks - 1)
+        }
+
+        setStateOfCheckbox(!stateOfCheckbox)
     }
 
-    function handleDeleteTask() {
-        onDeleteTask(idTasks);
+    useEffect(() => {
+        setAlteredCheckbox(!alteredCheckbox)
+    }, [stateOfCheckbox, numberOfCompleteTasks])
+
+    async function handleDeleteTask() {
+        if(numberOfCompleteTasks !== 0) setNumberOfCompleteTasks(numberOfCompleteTasks - 1)
+        onDeleteTask(idTasks)
     }
 
     return (
         <section className="taskList">
-                <div className="contentTasks" key={idTasks}>
-                    <label>
+                <div className="contentTasks">
+                    <label className="cont">
                         <input 
                             type="checkbox" 
                             id="checkbox"
                             value={idTasks}
-                            checked={stateOfCheckbox}
-                            onChange={handleCheckbox}
-                        ></input>     
+                            checked={completeTasks}
+                            onChange={() => handleCheckbox(idTasks)}
+                        />  
                         <p className={stateDecorationOfCheckbox}>{contentTasks}</p>
                     </label>
                     <button onClick={handleDeleteTask}>

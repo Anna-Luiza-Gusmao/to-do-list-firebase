@@ -1,15 +1,18 @@
 import styles from './App.module.css'
 import { Header } from './components/Header'
 import { Task } from './components/Task'
+import { TasksContextProvider } from './context'
 
 export function App() {
   return (
-    <div>
-      <Header />
+    <TasksContextProvider>
+      <div>
+        <Header />
 
-      <div className={styles.wrapper}>
-        <Task />
+        <div className={styles.wrapper}>
+          <Task />
+        </div>
       </div>
-    </div>
+    </TasksContextProvider>
   )
 }

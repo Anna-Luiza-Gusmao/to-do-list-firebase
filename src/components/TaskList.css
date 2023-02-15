@@ -18,23 +18,11 @@
     margin-bottom: 0.75rem;
 }
 
-.contentTasks input[type="checkbox"]{
-    /*all: unset;*/
-
-    margin-right: 1.125rem;
-    height: 1.5rem;
-    width: 1.5rem;
-}
-
-.contentTasks input[type="checkbox"]:focus{
-    box-shadow: 0 0 0 0;
-}
-
-.line{
+.line {
     text-decoration: line-through;
 }
 
-.noLine{
+.noLine {
     text-decoration: none;
 }
 
@@ -43,7 +31,7 @@
     line-height: 1.4;
     font-size: 1rem;
     text-align: left;
-    
+
     display: flex;
     align-items: center;
 }
@@ -63,17 +51,85 @@
     color: var(--danger);
 }
 
+.cont {
+    display: flex;
+    align-items: center;
+    transform: scale(1);
+}
+
+input[type="checkbox"] {
+    height: 1.7rem;
+    width: 1.7rem;
+    margin: 5px;
+    display: inline-block;
+    appearance: none;
+    position: relative;
+    background-color: transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    overflow: hidden;
+    margin-right: 1.125rem;
+    border: 2px solid var(--blue);
+}
+
+input[type="checkbox"]:checked {
+    border: none;
+}
+
+input[type="checkbox"]::after {
+    content: '';
+    display: block;
+    height: 0.8rem;
+    width: .3rem;
+    border-bottom: .31rem solid var(--gray-100);
+    border-right: .31rem solid var(--gray-100);
+    opacity: 0;
+    transform: rotate(45deg) translate(-50%, -50%);
+    position: absolute;
+    top: 45%;
+    left: 25%;
+    transition: .25s ease;
+}
+
+input[type="checkbox"]::before {
+    content: '';
+    display: block;
+    height: 0;
+    width: 0;
+    background-color: var(--purple-dark);
+    border-radius: 50%;
+    opacity: .5;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transition: .3s ease;
+}
+
+input[type="checkbox"]:checked::before {
+    height: 130%;
+    width: 130%;
+    opacity: 100%;
+}
+
+input[type="checkbox"]:checked::after {
+    opacity: 100%;
+}
+
 @media (max-width: 768px) {
     .taskList {
         width: 20rem;
     }
+
     .contentTasks {
         padding: 1.25rem 1.125rem;
     }
-    .contentTasks input[type="checkbox"]{
+
+    .contentTasks input[type="checkbox"] {
         height: 1.25rem;
         width: 1.25rem;
     }
+
     .contentTasks p {
         font-size: 0.875rem;
     }

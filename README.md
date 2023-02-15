@@ -4,7 +4,10 @@
 
 ## 🎉 Let's go!
 
-Para iniciar o projeto insira o comando <code>npm run dev</code> e para iniciar o servidor JSON insira em outro terminal o comando <code>npx json-server --watch db.json</code>
+Para iniciar o projeto insira o comando:
+```
+npm run dev
+```
 
 ## 💻 Projeto
 
@@ -25,11 +28,13 @@ Esse projeto foi desenvolvido com as seguintes tecnologias:
 - React
 - Node e NPM
 - Vite
+- Firebase
 
 
 ## 📚 Bibliotecas
 
 - Phosphor Icons
+
 
 ## 🎨 Figma
 
