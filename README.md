@@ -15,7 +15,7 @@ https://to-do-list-bef22.web.app/
 
 ## 💻 Projeto
 
-Uma aplicação de controle de tarefas no estilo **to-do list**, que contém as seguintes funcionalidades:
+Uma aplicação de controle de tarefas no estilo **to-do-list** conectada ao Firebase, que contém as seguintes funcionalidades:
 
 - Adicionar uma nova tarefa
 - Marcar e desmarcar uma tarefa como concluída
