@@ -8,7 +8,6 @@ export function App() {
     <TasksContextProvider>
       <div>
         <Header />
-
         <div className={styles.wrapper}>
           <Task />
         </div>
