@@ -17,12 +17,20 @@ interface Tasks {
 export function Task () {
     const [tasks, setTasks] = useState<Tasks[]>([])
     const [newTask, setNewTask] = useState("")
-    const { alteredCheckbox, setNumberOfCompleteTasks } = useContext(TasksContext)
+    const { alteredCheckbox, setNumberOfCompleteTasks, numberOfCompleteTasks } = useContext(TasksContext)
 
     const [stateDeleteTask, setNewStateDeleteTask] = useState(Boolean)
 
     const isNewTaskEmpty = newTask.length === 0;
     const numberOfTasks = tasks.length;
+
+    const checkNumberOfTasks = () => {
+        let numberOfCompleteTasks = 0
+        tasks.map((task) => {
+            if(task.complete === true) numberOfCompleteTasks = numberOfCompleteTasks + 1
+        })
+        setNumberOfCompleteTasks(numberOfCompleteTasks)
+    }
 
     const allTasks = collection(firestore, "todos")
 
@@ -40,19 +48,12 @@ export function Task () {
             })
             setTasks(loadedTasksFromDB)
         })
-    }
 
-    const checkNumberOfTasks = () => {
-        let numberOfCompleteTasks = 0
-        tasks.map((task) => {
-            if(task.complete === true) numberOfCompleteTasks = numberOfCompleteTasks + 1
-        })
-        setNumberOfCompleteTasks(numberOfCompleteTasks)
+        checkNumberOfTasks()
     }
 
     useEffect (() => {
         loadTasks()
-        checkNumberOfTasks()
     }, [newTask, stateDeleteTask, alteredCheckbox])
 
     async function postTask(content: string){
@@ -85,6 +86,7 @@ export function Task () {
                 if(document.id === task) {
                     deleteDoc(doc(firestore, "todos", task))
                     setNewStateDeleteTask(!stateDeleteTask)
+                    if(numberOfCompleteTasks !== 0) setNumberOfCompleteTasks(numberOfCompleteTasks - 1)
                 }
             })
         })

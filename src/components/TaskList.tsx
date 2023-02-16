@@ -48,11 +48,14 @@ export function TaskList ({ idTasks, contentTasks, onDeleteTask, completeTasks}:
 
     useEffect(() => {
         setAlteredCheckbox(!alteredCheckbox)
-        if(completeTasks === true) setStateDecorationOfCheckbox('line')
+        if(completeTasks === true) {
+            setStateDecorationOfCheckbox('line')
+        } else {
+            setStateDecorationOfCheckbox('noLine')
+        }
     }, [stateOfCheckbox, numberOfCompleteTasks])
 
     async function handleDeleteTask() {
-        if(numberOfCompleteTasks !== 0) setNumberOfCompleteTasks(numberOfCompleteTasks - 1)
         onDeleteTask(idTasks)
     }
 
