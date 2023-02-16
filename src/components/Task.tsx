@@ -17,7 +17,7 @@ interface Tasks {
 export function Task () {
     const [tasks, setTasks] = useState<Tasks[]>([])
     const [newTask, setNewTask] = useState("")
-    const { alteredCheckbox } = useContext(TasksContext)
+    const { alteredCheckbox, setNumberOfCompleteTasks } = useContext(TasksContext)
 
     const [stateDeleteTask, setNewStateDeleteTask] = useState(Boolean)
 
@@ -42,8 +42,17 @@ export function Task () {
         })
     }
 
+    const checkNumberOfTasks = () => {
+        let numberOfCompleteTasks = 0
+        tasks.map((task) => {
+            if(task.complete === true) numberOfCompleteTasks = numberOfCompleteTasks + 1
+        })
+        setNumberOfCompleteTasks(numberOfCompleteTasks)
+    }
+
     useEffect (() => {
-        loadTasks();
+        loadTasks()
+        checkNumberOfTasks()
     }, [newTask, stateDeleteTask, alteredCheckbox])
 
     async function postTask(content: string){
