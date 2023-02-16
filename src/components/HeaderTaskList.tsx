@@ -16,7 +16,6 @@ export function HeaderTaskList ({quantTasks}:NumberOfTasks) {
                     <p>Tarefas criadas</p>
                     <span>{quantTasks}</span>
                 </div>
-                
                 <div className={styles.contentParagraphConcluidas}>
                     <p>Concluídas</p>
                     <span>{numberOfCompleteTasks} de {quantTasks}</span>
