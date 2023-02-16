@@ -8,6 +8,10 @@ Para iniciar o projeto insira o comando:
 ```
 npm run dev
 ```
+ou acesse o link:
+```
+https://to-do-list-bef22.web.app/
+```
 
 ## 💻 Projeto
 
